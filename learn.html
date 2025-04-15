@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تطبيق حفظ القرآن - آية يومية</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap');
+        
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: #f8f4e6;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            background: linear-gradient(135deg, #004d40 0%, #00796b 100%);
+            color: white;
+            padding: 25px 0;
+            text-align: center;
+            border-radius: 12px 12px 0 0;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            margin: 0;
+            font-size: 32px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        .motto {
+            background-color: rgba(255, 255, 255, 0.15);
+            margin: 15px auto 0;
+            padding: 12px 25px;
+            border-radius: 30px;
+            font-size: 18px;
+            display: inline-block;
+            font-weight: 300;
+        }
+        .quran-container {
+            background-color: white;
+            border-radius: 12px;
+            padding: 35px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+        .quran-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle at top right, rgba(0, 77, 64, 0.1), transparent 70%);
+            z-index: 0;
+        }
+        .verse-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        h2 {
+            margin: 0;
+            font-size: 24px;
+            color: #004d40;
+            position: relative;
+            display: inline-block;
+        }
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background-color: #004d40;
+            border-radius: 2px;
+        }
+        .verse-date {
+            background-color: #e0f2f1;
+            color: #004d40;
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .verse {
+            font-family: 'Amiri', serif;
+            font-size: 26px;
+            line-height: 1.8;
+            text-align: center;
+            margin: 30px 0;
+            padding: 25px;
+            background-color: #f9f9f9;
+            border-radius: 12px;
+            border-right: 5px solid #004d40;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        .verse:hover {
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transform: translateY(-2px);
+        }
+        .verse::before {
+            content: '"';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 60px;
+            color: rgba(0, 77, 64, 0.1);
+            font-family: Arial, sans-serif;
+        }
+        .verse-source {
+            text-align: left;
+            font-size: 16px;
+            color: #004d40;
+            font-weight: 500;
+            margin-top: 15px;
+        }
+        .memorization-tools {
+            margin-top: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .memorization-step {
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+        .memorization-step:hover {
+            background-color: #e0f2f1;
+        }
+        .step-number {
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #004d40;
+            color: white;
+            border-radius: 50%;
+            margin-left: 15px;
+            font-weight: bold;
+        }
+        .progress-container {
+            margin-top: 25px;
+            background-color: #e0f2f1;
+            border-radius: 8px;
+            height: 12px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 12px;
+            background: linear-gradient(90deg, #004d40 0%, #00796b 100%);
+            border-radius: 8px;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        .progress-text {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #004d40;
+            display: flex;
+            justify-content: space-between;
+        }
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+            gap: 15px;
+        }
+        button {
+            background: linear-gradient(135deg, #004d40 0%, #00796b 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            flex: 1;
+        }
+        button:hover {
+            box-shadow: 0 5px 15px rgba(0, 77, 64, 0.2);
+            transform: translateY(-2px);
+        }
+        button.secondary {
+            background: linear-gradient(135deg, #f8f4e6 0%, #e8e4d6 100%);
+            color: #004d40;
+            border: 1px solid #004d40;
+        }
+        .notification-settings {
+            background-color: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+        }
+        .whatsapp-container {
+            display: flex;
+            align-items: center;
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #e0f2f1;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        .whatsapp-container:focus-within {
+            border-color: #004d40;
+            box-shadow: 0 0 0 3px rgba(0, 77, 64, 0.1);
+        }
+        .whatsapp-icon {
+            width: 40px;
+            height: 40px;
+            margin-left: 15px;
+            background-color: #25D366;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 20px;
+        }
+        .phone-input {
+            padding: 12px;
+            width: 100%;
+            border: none;
+            outline: none;
+            font-size: 16px;
+            background-color: transparent;
+        }
+        .memorization-tracker {
+            background-color: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+            margin-top: 30px;
+        }
+        .streak-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px 0;
+            gap: 15px;
+        }
+        .streak-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 8px solid #e0f2f1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            position: relative;
+            margin: 0 15px;
+        }
+        .streak-circle.active {
+            border-color: #004d40;
+        }
+        .streak-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #004d40;
+        }
+        .streak-label {
+            font-size: 12px;
+            color: #333;
+        }
+        .streak-day {
+            font-size: 12px;
+            text-align: center;
+            width: 40px;
+        }
+        .notification {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #004d40 0%, #00796b 100%);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            text-align: center;
+        }
+        #notificationStatus {
+            margin-top: 15px;
+            color: #004d40;
+            font-weight: 500;
+            text-align: center;
+        }
+        .memorize-button {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin-top: 20px;
+            background: linear-gradient(135deg, #004d40 0%, #00796b 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .memorize-button:hover {
+            box-shadow: 0 5px 15px rgba(0, 77, 64, 0.2);
+            transform: translateY(-2px);
+        }
+        .word-highlight {
+            color: #004d40;
+            font-weight: bold;
+            background-color: rgba(0, 77, 64, 0.1);
+            padding: 3px 5px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>حفظ القرآن - آية يومية</h1>
+            <div class="motto">قَلِيلٌ دَائِمٌ خَيْرٌ مِنْ كَثِيرٍ مُنْقَطِعٍ</div>
+        </header>
+
+        <div class="quran-container">
+            <div class="verse-header">
+                <h2>آية اليوم للحفظ</h2>
+                <div class="verse-date" id="currentDate">12 أبريل 2025</div>
+            </div>
+            <div class="verse" id="dailyVerse">
+                بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
+            </div>
+            <div class="verse-source" id="verseSource">
+                سورة الفاتحة - الآية 1
+            </div>
+            
+            <div class="memorization-tools">
+                <h3>خطوات الحفظ:</h3>
+                <div class="memorization-step">
+                    <div class="step-number">1</div>
+                    <div>اقرأ الآية بتأنٍ 3 مرات متتالية</div>
+                </div>
+                <div class="memorization-step">
+                    <div class="step-number">2</div>
+                    <div>حاول تذكرها دون النظر إليها</div>
+                </div>
+                <div class="memorization-step">
+                    <div class="step-number">3</div>
+                    <div>اختبر نفسك بالضغط على زر "اختبار الحفظ"</div>
+                </div>
+            </div>
+            
+            <button class="memorize-button" id="testMemorizationBtn">اختبار الحفظ</button>
+            
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            <div class="progress-text">
+                <span id="progressText">الآية 1 من 6236 (0.02%)</span>
+                <span id="daysCompletedText">1 يوم من أصل 6236 يوم</span>
+            </div>
+            <div class="nav-buttons">
+                <button id="prevVerseBtn" class="secondary">الآية السابقة</button>
+                <button id="nextVerseBtn">الآية التالية</button>
+            </div>
+        </div>
+
+        <div class="notification-settings">
+            <h2>تذكير يومي على الواتساب</h2>
+            <p>سجل رقم هاتفك للحصول على تذكير يومي لحفظ آية جديدة:</p>
+            <div class="whatsapp-container">
+                <div class="whatsapp-icon">W</div>
+                <input type="tel" id="phoneInput" class="phone-input" placeholder="أدخل رقم هاتفك مع رمز الدولة (مثال: 966501234567)" dir="ltr">
+            </div>
+            <button id="subscribeBtn">تفعيل التذكير اليومي</button>
+            <div id="notificationStatus"></div>
+        </div>
+
+        <div class="memorization-tracker">
+            <h2>متابعة الحفظ</h2>
+            <p>استمر في الحفظ يومياً لبناء عادة دائمة. تذكر: <span class="word-highlight">قليل دائم خير من كثير منقطع</span></p>
+            
+            <div class="streak-container">
+                <div class="streak-day">
+                    <div>الأحد</div>
+                </div>
+                <div class="streak-circle active">
+                    <div class="streak-number">✓</div>
+                </div>
+                <div class="streak-day">
+                    <div>الإثنين</div>
+                </div>
+                <div class="streak-circle active">
+                    <div class="streak-number">✓</div>
+                </div>
+                <div class="streak-day">
+                    <div>الثلاثاء</div>
+                </div>
+                <div class="streak-circle active">
+                    <div class="streak-number">✓</div>
+                </div>
+                <div class="streak-day">
+                    <div>الأربعاء</div>
+                </div>
+                <div class="streak-circle active">
+                    <div class="streak-number">✓</div>
+                </div>
+                <div class="streak-day">
+                    <div>الخميس</div>
+                </div>
+                <div class="streak-circle">
+                    <div class="streak-number">-</div>
+                </div>
+                <div class="streak-day">
+                    <div>الجمعة</div>
+                </div>
+                <div class="streak-circle">
+                    <div class="streak-number">-</div>
+                </div>
+                <div class="streak-day">
+                    <div>السبت</div>
+                </div>
+                <div class="streak-circle">
+                    <div class="streak-number">-</div>
+                </div>
+            </div>
+            
+            <div class="progress-container">
+                <div class="progress-bar" style="width: 12%;"></div>
+            </div>
+            <div class="progress-text">
+                <span>4 أيام متتالية من الحفظ</span>
+                <span>أكملت 4 آيات</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="notification" id="notification">
+        أحسنت! تم تسجيل إنجازك اليوم في حفظ الآية.
+    </div>
+
+    <script>
+        // قائمة بالآيات القرآنية مرتبة حسب المصحف
+        const orderedVerses = [
+            {
+                text: "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ",
+                source: "سورة الفاتحة - الآية 1",
+                surah: 1,
+                verseNumber: 1,
+                totalVerseNumber: 1
+            },
+            {
+                text: "الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ",
+                source: "سورة الفاتحة - الآية 2",
+                surah: 1,
+                verseNumber: 2,
+                totalVerseNumber: 2
+            },
+            {
+                text: "الرَّحْمَٰنِ الرَّحِيمِ",
+                source: "سورة الفاتحة - الآية 3",
+                surah: 1,
+                verseNumber: 3,
+                totalVerseNumber: 3
+            },
+            {
+                text: "مَالِكِ يَوْمِ الدِّينِ",
+                source: "سورة الفاتحة - الآية 4",
+                surah: 1,
+                verseNumber: 4,
+                totalVerseNumber: 4
+            },
+            {
+                text: "إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ",
+                source: "سورة الفاتحة - الآية 5",
+                surah: 1,
+                verseNumber: 5,
+                totalVerseNumber: 5
+            },
+            {
+                text: "اهْدِنَا الصِّرَاطَ الْمُسْتَقِيمَ",
+                source: "سورة الفاتحة - الآية 6",
+                surah: 1,
+                verseNumber: 6,
+                totalVerseNumber: 6
+            },
+            {
+                text: "صِرَاطَ الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ الْمَغْضُوبِ عَلَيْهِمْ وَلَا الضَّالِّينَ",
+                source: "سورة الفاتحة - الآية 7",
+                surah: 1,
+                verseNumber: 7,
+                totalVerseNumber: 7
+            },
+            {
+                text: "الم",
+                source: "سورة البقرة - الآية 1",
+                surah: 2,
+                verseNumber: 1,
+                totalVerseNumber: 8
+            },
+            {
+                text: "ذَٰلِكَ الْكِتَابُ لَا رَيْبَ فِيهِ هُدًى لِّلْمُتَّقِينَ",
+                source: "سورة البقرة - الآية 2",
+                surah: 2,
+                verseNumber: 2,
+                totalVerseNumber: 9
+            },
+            {
+                text: "الَّذِينَ يُؤْمِنُونَ بِالْغَيْبِ وَيُقِيمُونَ الصَّلَاةَ وَمِمَّا رَزَقْنَاهُمْ يُنفِقُونَ",
+                source: "سورة البقرة - الآية 3",
+                surah: 2,
+                verseNumber: 3,
+                totalVerseNumber: 10
+            }
+        ];
+
+        // إجمالي عدد آيات القرآن الكريم
+        const totalQuranVerses = 6236;
+        
+        // المؤشر الحالي للآية
+        let currentVerseIndex = 0;
+
+        // تحديث الآية المعروضة
+        function updateDisplayedVerse() {
+            const verse = orderedVerses[currentVerseIndex];
+            document.getElementById('dailyVerse').textContent = verse.text;
+            document.getElementById('verseSource').textContent = verse.source;
+            
+            // تحديث شريط التقدم
+            const progressPercent = (verse.totalVerseNumber / totalQuranVerses) * 100;
+            document.getElementById('progressBar').style.width = progressPercent + '%';
+            document.getElementById('progressText').textContent = 
+                `الآية ${verse.totalVerseNumber} من ${totalQuranVerses} (${progressPercent.toFixed(2)}%)`;
+            document.getElementById('daysCompletedText').textContent = 
+                `${verse.totalVerseNumber} يوم من أصل ${totalQuranVerses} يوم`;
+        }
+
+        // تحديث التاريخ الحالي
+        function updateCurrentDate() {
+            const date = new Date();
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('currentDate').textContent = date.toLocaleDateString('ar-SA', options);
+        }
+
+        // الانتقال إلى الآية التالية
+        document.getElementById('nextVerseBtn').addEventListener('click', function() {
+            if (currentVerseIndex < orderedVerses.length - 1) {
+                currentVerseIndex++;
+                updateDisplayedVerse();
+            } else {
+                alert('لقد وصلت إلى نهاية الآيات المتاحة في هذا النموذج. في التطبيق الكامل ستكون جميع آيات القرآن متاحة.');
+            }
+        });
+
+        // الانتقال إلى الآية السابقة
+        document.getElementById('prevVerseBtn').addEventListener('click', function() {
+            if (currentVerseIndex > 0) {
+                currentVerseIndex--;
+                updateDisplayedVerse();
+            } else {
+                alert('أنت بالفعل في أول آية.');
+            }
+        });
+
+        // اختبار الحفظ
+        document.getElementById('testMemorizationBtn').addEventListener('click', function() {
+            // إخفاء نص الآية مؤقتًا
+            const verseElement = document.getElementById('dailyVerse');
+            const originalText = verseElement.textContent;
+            verseElement.textContent = '...';
+            
+            // بعد 3 ثوانٍ، اطلب من المستخدم كتابة الآية
+            setTimeout(function() {
+                const userRecitation = prompt('اكتب الآية من ذاكرتك:');
+                verseElement.textContent = originalText;
+                
+                if(userRecitation) {
+                    // تقييم بسيط للحفظ
+                    const similarity = similarityScore(userRecitation, originalText);
+                    
+                    if(similarity > 0.8) {
+                        showNotification('أحسنت! لقد حفظت الآية بنجاح');
+                    } else if(similarity > 0.5) {
+                        showNotification('جيد! تحتاج إلى مزيد من التكرار');
+                    } else {
+                        showNotification('استمر في المحاولة، كرر قراءة الآية بتدبر');
+                    }
+                }
+            }, 3000);
+        });
+
+        // حساب نسبة التشابه بين النصوص (تبسيط)
+        function similarityScore(str1, str2) {
+            // هذه دالة مبسطة لتقييم التشابه
+            const len1 = str1.length;
+            const len2 = str2.length;
+            
+            // إذا كان أحد النصوص فارغًا
+            if (len1 === 0 || len2 === 0) {
+                return 0;
+            }
+            
+            // إذا كانت النصوص متطابقة
+            if (str1 === str2) {
+                return 1;
+            }
+            
+            // حساب تقريبي للتشابه
+            let matches = 0;
+            for (let i = 0; i < Math.min(len1, len2); i++) {
+                if (str1[i] === str2[i]) {
+                    matches++;
+                }
+            }
+            
+            return matches / Math.max(len1, len2);
+        }
+
+        // معالجة الاشتراك في إشعارات الواتساب
+        document.getElementById('subscribeBtn').addEventListener('click', function() {
+            const phoneNumber = document.getElementById('phoneInput').value;
+            const phonePattern = /^[0-9]{10,15}$/;
+            
+            if (phoneNumber && phonePattern.test(phoneNumber)) {
+                document.getElementById('notificationStatus').textContent = 'تم الاشتراك بنجاح! سنرسل لك تذكيرًا يوميًا على الواتساب: ' + phoneNumber;
+                showNotification('تم تفعيل التذكير اليومي بنجاح');
+            } else {
+                document.getElementById('notificationStatus').textContent = 'يرجى إدخال رقم هاتف صحيح مع رمز الدولة.';
+            }
+        });
+
+        // عرض إشعار
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.style.display = 'block';
+            
+            // إخفاء الإشعار بعد 3 ثوان
+            setTimeout(function() {
+                notification.style.display = 'none';
+            }, 3000);
+        }
+
+        // عرض الآية الأولى وتحديث التاريخ عند تحميل الصفحة
+        window.addEventListener('load', function() {
+            updateDisplayedVerse();
+            updateCurrentDate();
+        });
+    </script>
+</body>
+</html>
